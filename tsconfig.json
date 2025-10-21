@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "target": "es2019",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": ["/*"],
+      "@modules/*": ["modules/*"],
+      "@auth/*": ["modules/auth/*"],
+      "@reference/*": ["modules/reference/*"],
+      "@character/*": ["modules/character/*"],
+      "@normalize/*": ["modules/normalize/*"],
+      "@level/*": ["modules/character/modules/level/*"],
+      "@personality/*": ["modules/character/modules/personality/*"],
+      "@stats/*": ["modules/character/modules/stats/*"],
+      "@health/*": ["modules/character/modules/health/*"],
+      "@armour/*": ["modules/character/modules/armour/*"],
+      "@speed/*": ["modules/character/modules/speed/*"],
+      "@note/*": ["modules/character/modules/note/*"]
+    }
+  },
+  "exclude": ["node_modules", "dist"]
+}
