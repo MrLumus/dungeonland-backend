@@ -6,6 +6,7 @@ import {
   Body,
   UseGuards,
   Request,
+  ParseIntPipe,
 } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { ApiTags, ApiOperation, ApiBearerAuth } from "@nestjs/swagger";
@@ -26,7 +27,7 @@ export class CharacterStatController {
 
   @Get(":id")
   @ApiOperation({ summary: "Get CharacterStat by ID" })
-  findOne(@Request() req: any, @Param("id") id: string) {
+  findOne(@Request() req: any, @Param("id", ParseIntPipe) id: number) {
     return this.service.findOne(req.user.userId, id);
   }
 
@@ -34,7 +35,7 @@ export class CharacterStatController {
   @ApiOperation({ summary: "Update CharacterStat" })
   update(
     @Request() req: any,
-    @Param("id") id: string,
+    @Param("id", ParseIntPipe) id: number,
     @Body() dto: any
   ) {
     return this.service.update(req.user.userId, id, dto);

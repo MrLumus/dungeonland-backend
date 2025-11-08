@@ -17,7 +17,7 @@ export class CharacterStatService {
     return items;
   }
 
-  async findOne(userId: string, id: string) {
+  async findOne(userId: string, id: number) {
     const item = await this.repository.findOne({
       where: { id }
     });
@@ -29,7 +29,7 @@ export class CharacterStatService {
     return item;
   }
 
-  async update(userId: string, id: string, dto: any) {
+  async update(userId: string, id: number, dto: any) {
     const item = await this.findOne(userId, id);
     Object.assign(item, dto);
     return this.repository.save(item);

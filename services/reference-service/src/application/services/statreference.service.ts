@@ -10,16 +10,17 @@ export class StatReferenceService {
     private readonly repository: Repository<StatReference>
   ) {}
 
-  async findByCharacter(userId: string, characterId: string) {
+  async findAll() {
     const items = await this.repository.find({
-      where: { characterId }
+      relations: ['skills']
     });
     return items;
   }
 
-  async findOne(userId: string, id: string) {
+  async findOne(id: number) {
     const item = await this.repository.findOne({
-      where: { id }
+      where: { id },
+      relations: ['skills']
     });
 
     if (!item) {
@@ -29,9 +30,32 @@ export class StatReferenceService {
     return item;
   }
 
-  async update(userId: string, id: string, dto: any) {
-    const item = await this.findOne(userId, id);
+  async findByCode(code: string) {
+    const item = await this.repository.findOne({
+      where: { code },
+      relations: ['skills']
+    });
+
+    if (!item) {
+      throw new NotFoundException('StatReference not found');
+    }
+
+    return item;
+  }
+
+  async create(dto: any) {
+    const item = this.repository.create(dto);
+    return this.repository.save(item);
+  }
+
+  async update(id: number, dto: any) {
+    const item = await this.findOne(id);
     Object.assign(item, dto);
     return this.repository.save(item);
+  }
+
+  async delete(id: number) {
+    const item = await this.findOne(id);
+    await this.repository.remove(item);
   }
 }
