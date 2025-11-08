@@ -19,10 +19,10 @@ export class ArmourService {
   }
 
   async findByCharacter(userId: string, characterId: string) {
-    const items = await this.repository.find({
+    const item = await this.repository.findOne({
       where: { characterId }
     });
-    return items;
+    return item; // Returns single object or null
   }
 
   async findOne(userId: string, id: string) {
