@@ -13,9 +13,9 @@ const config: DataSourceOptions = {
   ssl: process.env.DATABASE_SSL === 'true' ? { rejectUnauthorized: false } : false,
   entities: [__dirname + '/../../**/*.entity{.ts,.js}'],
   migrations: [__dirname + '/../database/migrations/*{.ts,.js}'],
-  synchronize: false,
+  synchronize: true, // Auto-create tables (use migrations in production!)
   migrationsRun: false,
-  logging: false,
+  logging: true,
 };
 
 export default config;
