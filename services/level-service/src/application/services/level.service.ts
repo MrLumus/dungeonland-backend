@@ -10,6 +10,14 @@ export class LevelService {
     private readonly repository: Repository<Level>
   ) {}
 
+  async create(userId: string, characterId: string, dto: any) {
+    const item = this.repository.create({
+      ...dto,
+      characterId,
+    });
+    return this.repository.save(item);
+  }
+
   async findByCharacter(userId: string, characterId: string) {
     const items = await this.repository.find({
       where: { characterId }

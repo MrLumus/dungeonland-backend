@@ -1,6 +1,7 @@
 import {
   Controller,
   Get,
+  Post,
   Patch,
   Param,
   Body,
@@ -17,6 +18,16 @@ import { LevelService } from "../../application/services";
 @ApiBearerAuth()
 export class LevelController {
   constructor(private readonly service: LevelService) {}
+
+  @Post()
+  @ApiOperation({ summary: "Create Level for character" })
+  create(
+    @Request() req: any,
+    @Param("characterId") characterId: string,
+    @Body() dto: any
+  ) {
+    return this.service.create(req.user.userId, characterId, dto);
+  }
 
   @Get()
   @ApiOperation({ summary: "Get levels for character" })

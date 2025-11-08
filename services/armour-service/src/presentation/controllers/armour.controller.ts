@@ -1,6 +1,7 @@
 import {
   Controller,
   Get,
+  Post,
   Patch,
   Param,
   Body,
@@ -17,6 +18,16 @@ import { ArmourService } from "../../application/services";
 @ApiBearerAuth()
 export class ArmourController {
   constructor(private readonly service: ArmourService) {}
+
+  @Post()
+  @ApiOperation({ summary: "Create Armour for character" })
+  create(
+    @Request() req: any,
+    @Param("characterId") characterId: string,
+    @Body() dto: any
+  ) {
+    return this.service.create(req.user.userId, characterId, dto);
+  }
 
   @Get()
   @ApiOperation({ summary: "Get armour for character" })

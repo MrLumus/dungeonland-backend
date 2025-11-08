@@ -1,6 +1,7 @@
 import {
   Controller,
   Get,
+  Post,
   Patch,
   Param,
   Body,
@@ -17,6 +18,16 @@ import { HealthService } from "../../application/services";
 @ApiBearerAuth()
 export class HealthController {
   constructor(private readonly service: HealthService) {}
+
+  @Post()
+  @ApiOperation({ summary: "Create Health for character" })
+  create(
+    @Request() req: any,
+    @Param("characterId") characterId: string,
+    @Body() dto: any
+  ) {
+    return this.service.create(req.user.userId, characterId, dto);
+  }
 
   @Get()
   @ApiOperation({ summary: "Get health for character" })

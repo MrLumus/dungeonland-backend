@@ -1,6 +1,7 @@
 import {
   Controller,
   Get,
+  Post,
   Patch,
   Param,
   Body,
@@ -17,6 +18,16 @@ import { SpeedService } from "../../application/services";
 @ApiBearerAuth()
 export class SpeedController {
   constructor(private readonly service: SpeedService) {}
+
+  @Post()
+  @ApiOperation({ summary: "Create Speed for character" })
+  create(
+    @Request() req: any,
+    @Param("characterId") characterId: string,
+    @Body() dto: any
+  ) {
+    return this.service.create(req.user.userId, characterId, dto);
+  }
 
   @Get()
   @ApiOperation({ summary: "Get speed for character" })

@@ -25,12 +25,18 @@ import { CreateCharacterDto, UpdateCharacterDto } from "../../application/dto";
 export class CharacterController {
   constructor(private readonly characterService: CharacterService) {}
 
+  private extractToken(req: any): string {
+    const authHeader = req.headers?.authorization || '';
+    return authHeader.replace('Bearer ', '');
+  }
+
   @Post()
   @ApiOperation({ summary: "Create a new character" })
   @ApiResponse({ status: 201, description: "Character created successfully" })
   @ApiResponse({ status: 401, description: "Unauthorized" })
   create(@Request() req: any, @Body() dto: CreateCharacterDto) {
-    return this.characterService.create(req.user.userId, dto);
+    const token = this.extractToken(req);
+    return this.characterService.create(req.user.userId, dto, token);
   }
 
   @Get()
@@ -45,7 +51,8 @@ export class CharacterController {
   @ApiResponse({ status: 200, description: "Character retrieved successfully" })
   @ApiResponse({ status: 404, description: "Character not found" })
   findOne(@Request() req: any, @Param("id") id: string) {
-    return this.characterService.findOneForUser(req.user.userId, id);
+    const token = this.extractToken(req);
+    return this.characterService.findOneForUser(req.user.userId, id, token);
   }
 
   @Patch(":id")
