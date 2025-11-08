@@ -9,7 +9,8 @@
     "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli",
     "migration:generate": "npm run typeorm -- migration:generate ./src/migrations/NoteModule -d src/data-source.ts",
     "migration:run": "npm run typeorm -- migration:run -d src/data-source.ts",
-    "seed:init-stats": "ts-node -r tsconfig-paths/register src/seeds/init-stats.seed.ts"
+    "seed:init-stats": "ts-node -r tsconfig-paths/register src/seeds/init-stats.seed.ts",
+    "generate:service": "ts-node scripts/generate-microservice.ts"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
@@ -33,6 +34,7 @@
     "typeorm": "^0.3.17"
   },
   "devDependencies": {
+    "@types/node": "^24.10.0",
     "ts-node": "^10.9.1",
     "ts-node-dev": "^2.0.0",
     "tsconfig-paths": "^4.2.0",

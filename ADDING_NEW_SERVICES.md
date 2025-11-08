@@ -5,17 +5,17 @@
 Используйте автоматический генератор для создания нового микросервиса с полной DDD структурой:
 
 ```bash
-python3 scripts/generate-microservice.py <service-name> <port> [domain]
+npm run generate:service <service-name> <port> [domain]
 ```
 
 ### Примеры:
 
 ```bash
 # Новый сервис в Characters домене
-python3 scripts/generate-microservice.py inventory 3011
+npm run generate:service inventory 3011
 
 # Новый сервис в Auth домене
-python3 scripts/generate-microservice.py permissions 3012 auth
+npm run generate:service permissions 3012 auth
 ```
 
 ## Что генерируется автоматически
@@ -73,7 +73,7 @@ services/<service-name>-service/
 
 ```bash
 cd /home/user/dungeonland-backend
-python3 scripts/generate-microservice.py inventory 3011
+npm run generate:service inventory 3011
 ```
 
 **Вывод:**
@@ -250,7 +250,7 @@ DELETE /characters/:characterId/inventory/:id  - Удалить
 ## Параметры генератора
 
 ```bash
-python3 scripts/generate-microservice.py <service-name> <port> [domain]
+npm run generate:service <service-name> <port> [domain]
 ```
 
 **service-name** (обязательно):
@@ -274,7 +274,7 @@ python3 scripts/generate-microservice.py <service-name> <port> [domain]
 ### OneToOne сервис (как Health, Level, Speed)
 
 ```bash
-python3 scripts/generate-microservice.py experience 3011
+npm run generate:service experience 3011
 ```
 
 Затем в сервисе измените `findByCharacter` чтобы возвращал один объект:
@@ -291,7 +291,7 @@ async findByCharacter(userId: string, characterId: string) {
 ### OneToMany сервис (как Notes, Attacks, Spells)
 
 ```bash
-python3 scripts/generate-microservice.py quests 3012
+npm run generate:service quests 3012
 ```
 
 Оставьте `findByCharacter` как есть (возвращает массив).
@@ -299,7 +299,7 @@ python3 scripts/generate-microservice.py quests 3012
 ### Сервис с reference data (как Stats)
 
 ```bash
-python3 scripts/generate-microservice.py achievements 3013
+npm run generate:service achievements 3013
 ```
 
 Добавьте обогащение данными из reference-service в методе `findByCharacter`.
@@ -327,7 +327,7 @@ A: Используйте любые свободные порты, наприм
 
 ## Checklist для нового сервиса
 
-- [ ] Сгенерирован через `generate-microservice.py`
+- [ ] Сгенерирован через `npm run generate:service`
 - [ ] Обновлена Entity с нужными полями
 - [ ] Обновлены DTOs
 - [ ] Добавлен в `docker-compose.yml`
