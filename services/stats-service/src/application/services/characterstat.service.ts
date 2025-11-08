@@ -76,7 +76,52 @@ export class CharacterStatService {
       where: { characterId },
       relations: ['skills']
     });
-    return items;
+
+    // Enrich with reference data (stat names, skill names)
+    try {
+      const url = `${this.REFERENCE_SERVICE}/stats`;
+      const response = await firstValueFrom(this.httpService.get(url));
+      const statsRefs = response.data;
+
+      // Create maps for quick lookup
+      const statRefMap = new Map();
+      const skillRefMap = new Map();
+
+      for (const statRef of statsRefs) {
+        statRefMap.set(statRef.id, statRef);
+        if (statRef.skills) {
+          for (const skillRef of statRef.skills) {
+            skillRefMap.set(skillRef.id, skillRef);
+          }
+        }
+      }
+
+      // Enrich CharacterStats with reference data
+      return items.map(characterStat => {
+        const statRef = statRefMap.get(characterStat.statId);
+        const enrichedStat: any = {
+          ...characterStat,
+          stat: statRef ? { id: statRef.id, code: statRef.code, name: statRef.name } : null
+        };
+
+        // Enrich skills
+        if (characterStat.skills) {
+          enrichedStat.skills = characterStat.skills.map(characterSkill => {
+            const skillRef = skillRefMap.get(characterSkill.skillId);
+            return {
+              ...characterSkill,
+              skill: skillRef ? { id: skillRef.id, name: skillRef.name } : null
+            };
+          });
+        }
+
+        return enrichedStat;
+      });
+    } catch (error) {
+      this.logger.error('Failed to enrich stats with reference data:', error.message);
+      // Return stats without enrichment if reference-service is unavailable
+      return items;
+    }
   }
 
   async findOne(userId: string, id: number) {
