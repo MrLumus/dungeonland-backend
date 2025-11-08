@@ -5,7 +5,8 @@
   "scripts": {
     "start": "node dist/main.js",
     "start:dev": "nest start --watch",
-    "build": "tsc -p tsconfig.build.json"
+    "build": "tsc -p tsconfig.build.json",
+    "seed": "ts-node src/seeds/init-stats.seed.ts"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",

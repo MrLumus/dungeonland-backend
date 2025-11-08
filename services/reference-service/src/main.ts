@@ -4,10 +4,18 @@ import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
 import * as dotenv from "dotenv";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import { seedStatReferences } from "./seeds/init-stats.seed";
 
 dotenv.config();
 
 async function bootstrap() {
+  // Seed reference data before starting the app
+  try {
+    await seedStatReferences();
+  } catch (error) {
+    console.error("Warning: Failed to seed reference data:", error.message);
+  }
+
   const app = await NestFactory.create(AppModule);
 
   app.useGlobalPipes(

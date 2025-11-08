@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Level } from "../../domain/entities";
+import { LEVELS_CONFIG } from "../../domain/constants";
 
 @Injectable()
 export class LevelService {
@@ -11,9 +12,16 @@ export class LevelService {
   ) {}
 
   async create(userId: string, characterId: string, dto: any) {
+    const levelValue = dto.level || 1;
+    const { from, to, mastery } = LEVELS_CONFIG[levelValue];
+
     const item = this.repository.create({
-      ...dto,
       characterId,
+      level: levelValue,
+      expFrom: from,
+      expTo: to,
+      expCurrent: from,
+      mastery,
     });
     return this.repository.save(item);
   }

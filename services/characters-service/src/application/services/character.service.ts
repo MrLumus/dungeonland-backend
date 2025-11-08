@@ -29,7 +29,7 @@ export class CharacterService {
 
     // Create related entities in other microservices (async, non-blocking)
     this.microservicesClient
-      .createRelatedEntities(savedCharacter.id, userId, token)
+      .createRelatedEntities(savedCharacter.id, userId, token, dto.level)
       .catch((error) => {
         this.logger.error(`Failed to create related entities for character ${savedCharacter.id}:`, error.message);
       });

@@ -24,16 +24,17 @@ export class MicroservicesClientService {
   /**
    * Create all related entities for a new character across all microservices
    */
-  async createRelatedEntities(characterId: string, userId: string, token: string): Promise<void> {
+  async createRelatedEntities(characterId: string, userId: string, token: string, level?: number): Promise<void> {
     const headers = { Authorization: `Bearer ${token}` };
 
     try {
       // Create entities in parallel for better performance
       await Promise.allSettled([
         this.createHealth(characterId, userId, headers),
-        this.createLevel(characterId, userId, headers),
+        this.createLevel(characterId, userId, headers, level),
         this.createSpeed(characterId, userId, headers),
         this.createArmour(characterId, userId, headers),
+        this.createStats(characterId, userId, headers),
         this.createPersonality(characterId, userId, headers),
       ]);
 
@@ -85,10 +86,10 @@ export class MicroservicesClientService {
     );
   }
 
-  private async createLevel(characterId: string, userId: string, headers: any): Promise<void> {
+  private async createLevel(characterId: string, userId: string, headers: any, level?: number): Promise<void> {
     const url = `${this.LEVEL_SERVICE}/characters/${characterId}/level`;
     await firstValueFrom(
-      this.httpService.post(url, {}, { headers }) // Uses defaults from entity
+      this.httpService.post(url, { level: level || 1 }, { headers })
     );
   }
 
@@ -103,6 +104,13 @@ export class MicroservicesClientService {
     const url = `${this.ARMOUR_SERVICE}/characters/${characterId}/armour`;
     await firstValueFrom(
       this.httpService.post(url, { baseArmour: 10 }, { headers })
+    );
+  }
+
+  private async createStats(characterId: string, userId: string, headers: any): Promise<void> {
+    const url = `${this.STATS_SERVICE}/characters/${characterId}/stats`;
+    await firstValueFrom(
+      this.httpService.post(url, {}, { headers }) // Creates all 6 stats (STR, DEX, CON, INT, WIS, CHA)
     );
   }
 

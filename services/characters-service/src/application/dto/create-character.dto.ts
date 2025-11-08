@@ -25,4 +25,10 @@ export class CreateCharacterDto {
   @IsOptional()
   @IsNumber()
   money?: number;
+
+  @ApiPropertyOptional({ example: 1, description: "Уровень персонажа (1-20)", minimum: 1, maximum: 20 })
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  level?: number;
 }

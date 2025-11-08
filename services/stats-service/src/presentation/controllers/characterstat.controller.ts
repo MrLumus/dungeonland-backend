@@ -1,6 +1,7 @@
 import {
   Controller,
   Get,
+  Post,
   Patch,
   Param,
   Body,
@@ -18,6 +19,12 @@ import { CharacterStatService } from "../../application/services";
 @ApiBearerAuth()
 export class CharacterStatController {
   constructor(private readonly service: CharacterStatService) {}
+
+  @Post()
+  @ApiOperation({ summary: "Create all 6 stats for character (STR, DEX, CON, INT, WIS, CHA)" })
+  createAll(@Request() req: any, @Param("characterId") characterId: string) {
+    return this.service.createAllForCharacter(req.user.userId, characterId);
+  }
 
   @Get()
   @ApiOperation({ summary: "Get stats for character" })
