@@ -99,17 +99,29 @@ export class CharacterStatService {
       // Enrich CharacterStats with reference data
       return items.map(characterStat => {
         const statRef = statRefMap.get(characterStat.statId);
+
+        // Build enriched stat (exclude statId to avoid duplication)
         const enrichedStat: any = {
-          ...characterStat,
+          id: characterStat.id,
+          characterId: characterStat.characterId,
+          stat_value: characterStat.stat_value,
+          check_value: characterStat.check_value,
+          check_bonus: characterStat.check_bonus,
+          save_throw__value: characterStat.save_throw__value,
+          save_throw__bonus: characterStat.save_throw__bonus,
+          save_throw_proficient: characterStat.save_throw_proficient,
           stat: statRef ? { id: statRef.id, code: statRef.code, name: statRef.name } : null
         };
 
-        // Enrich skills
+        // Enrich skills (exclude skillId to avoid duplication)
         if (characterStat.skills) {
           enrichedStat.skills = characterStat.skills.map(characterSkill => {
             const skillRef = skillRefMap.get(characterSkill.skillId);
             return {
-              ...characterSkill,
+              id: characterSkill.id,
+              value: characterSkill.value,
+              bonus: characterSkill.bonus,
+              proficient: characterSkill.proficient,
               skill: skillRef ? { id: skillRef.id, name: skillRef.name } : null
             };
           });
