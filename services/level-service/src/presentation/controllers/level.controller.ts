@@ -13,7 +13,7 @@ import { ApiTags, ApiOperation, ApiBearerAuth } from "@nestjs/swagger";
 import { LevelService } from "../../application/services";
 
 @ApiTags("Characters/Level")
-@Controller("characters/:characterId/levels")
+@Controller("characters/:characterId/level")
 @UseGuards(AuthGuard('jwt'))
 @ApiBearerAuth()
 export class LevelController {
