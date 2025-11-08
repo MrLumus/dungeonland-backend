@@ -1,8 +1,8 @@
-import { Injectable, NotFoundException, ForbiddenException } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { Character } from "@domain/entities";
-import { CreateCharacterDto, UpdateCharacterDto } from "@application/dto";
+import { Character } from "../../domain/entities";
+import { CreateCharacterDto, UpdateCharacterDto } from "../dto";
 
 /**
  * Character Application Service

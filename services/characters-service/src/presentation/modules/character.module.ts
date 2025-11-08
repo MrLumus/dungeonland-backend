@@ -2,10 +2,10 @@ import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { PassportModule } from "@nestjs/passport";
 import { JwtModule } from "@nestjs/jwt";
-import { Character, Attack, Spell, InventoryItem } from "@domain/entities";
-import { CharacterService } from "@application/services";
-import { CharacterController } from "@presentation/controllers";
-import { JwtStrategy } from "@infrastructure/auth";
+import { Character, Attack, Spell, InventoryItem } from "../../domain/entities";
+import { CharacterService } from "../../application/services";
+import { CharacterController } from "../controllers";
+import { JwtStrategy } from "../../infrastructure/auth";
 
 /**
  * Character Module

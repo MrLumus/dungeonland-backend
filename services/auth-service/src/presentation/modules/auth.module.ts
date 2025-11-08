@@ -2,10 +2,10 @@ import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { JwtModule } from "@nestjs/jwt";
 import { PassportModule } from "@nestjs/passport";
-import { User } from "@domain/entities";
-import { AuthService } from "@application/services";
-import { AuthController } from "@presentation/controllers";
-import { JwtStrategy } from "@infrastructure/auth";
+import { User } from "../../domain/entities";
+import { AuthService } from "../../application/services";
+import { AuthController } from "../controllers";
+import { JwtStrategy } from "../../infrastructure/auth";
 
 /**
  * Auth Module

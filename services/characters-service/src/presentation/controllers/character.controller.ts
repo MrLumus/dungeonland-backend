@@ -11,8 +11,8 @@ import {
 } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from "@nestjs/swagger";
-import { CharacterService } from "@application/services";
-import { CreateCharacterDto, UpdateCharacterDto } from "@application/dto";
+import { CharacterService } from "../../application/services";
+import { CreateCharacterDto, UpdateCharacterDto } from "../../application/dto";
 
 /**
  * Character Controller
