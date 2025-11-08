@@ -19,7 +19,7 @@ export class CharacterService {
     private readonly microservicesClient: MicroservicesClientService
   ) {}
 
-  async create(userId: string, dto: CreateCharacterDto, token: string): Promise<Character> {
+  async create(userId: string, dto: CreateCharacterDto, token: string): Promise<any> {
     const character = this.characterRepo.create({
       ...dto,
       userId, // Store userId as reference to Auth service
@@ -27,14 +27,30 @@ export class CharacterService {
 
     const savedCharacter = await this.characterRepo.save(character);
 
-    // Create related entities in other microservices (async, non-blocking)
-    this.microservicesClient
-      .createRelatedEntities(savedCharacter.id, userId, token, dto.level)
-      .catch((error) => {
-        this.logger.error(`Failed to create related entities for character ${savedCharacter.id}:`, error.message);
-      });
+    // Create related entities in other microservices (await to ensure they're created)
+    try {
+      await this.microservicesClient.createRelatedEntities(
+        savedCharacter.id,
+        userId,
+        token,
+        dto.level
+      );
+    } catch (error) {
+      this.logger.error(`Failed to create related entities for character ${savedCharacter.id}:`, error.message);
+      // Continue - return character even if some related entities failed
+    }
 
-    return savedCharacter;
+    // Fetch all related data and return complete character
+    const relatedData = await this.microservicesClient.getCharacterCompleteData(
+      savedCharacter.id,
+      userId,
+      token
+    );
+
+    return {
+      ...savedCharacter,
+      ...relatedData,
+    };
   }
 
   async findAllForUser(userId: string): Promise<Character[]> {
