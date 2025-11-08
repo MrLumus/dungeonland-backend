@@ -1,0 +1,104 @@
+version: '3.8'
+
+services:
+  # Auth Database
+  auth-db:
+    image: postgres:15-alpine
+    container_name: dungeonland-auth-db
+    environment:
+      POSTGRES_DB: dungeonland_auth
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - auth-db-data:/var/lib/postgresql/data
+    networks:
+      - dungeonland-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Characters Database
+  characters-db:
+    image: postgres:15-alpine
+    container_name: dungeonland-characters-db
+    environment:
+      POSTGRES_DB: dungeonland_characters
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5434:5432"
+    volumes:
+      - characters-db-data:/var/lib/postgresql/data
+    networks:
+      - dungeonland-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Auth Service
+  auth-service:
+    build:
+      context: ./services/auth-service
+      dockerfile: Dockerfile
+    container_name: dungeonland-auth-service
+    environment:
+      PORT: 3001
+      AUTH_DB_HOST: auth-db
+      AUTH_DB_PORT: 5432
+      AUTH_DB_USER: postgres
+      AUTH_DB_PASSWORD: postgres
+      AUTH_DB_NAME: dungeonland_auth
+      DATABASE_SSL: "false"
+      JWT_SECRET: your-super-secret-jwt-key-change-in-production
+      JWT_EXPIRES_IN: 24h
+      CORS_ORIGIN: "*"
+    ports:
+      - "3001:3001"
+    depends_on:
+      auth-db:
+        condition: service_healthy
+    networks:
+      - dungeonland-network
+    restart: unless-stopped
+
+  # Characters Service
+  characters-service:
+    build:
+      context: ./services/characters-service
+      dockerfile: Dockerfile
+    container_name: dungeonland-characters-service
+    environment:
+      PORT: 3002
+      CHARACTERS_DB_HOST: characters-db
+      CHARACTERS_DB_PORT: 5432
+      CHARACTERS_DB_USER: postgres
+      CHARACTERS_DB_PASSWORD: postgres
+      CHARACTERS_DB_NAME: dungeonland_characters
+      DATABASE_SSL: "false"
+      AUTH_SERVICE_URL: http://auth-service:3001
+      JWT_SECRET: your-super-secret-jwt-key-change-in-production
+      CORS_ORIGIN: "*"
+    ports:
+      - "3002:3002"
+    depends_on:
+      characters-db:
+        condition: service_healthy
+      auth-service:
+        condition: service_started
+    networks:
+      - dungeonland-network
+    restart: unless-stopped
+
+networks:
+  dungeonland-network:
+    driver: bridge
+
+volumes:
+  auth-db-data:
+  characters-db-data:
