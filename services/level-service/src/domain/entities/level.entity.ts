@@ -1,11 +1,8 @@
 import {
   Column,
   Entity,
-  JoinColumn,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Character } from "@character/entities";
 import { LEVELS_CONFIG } from "../constants";
 
 @Entity({ name: "level" })
@@ -28,9 +25,6 @@ export class Level {
   @Column({ default: LEVELS_CONFIG[1].mastery })
   mastery: number;
 
-  @OneToOne(() => Character, (c) => c.level, {
-    onDelete: "CASCADE",
-  })
-  @JoinColumn({ name: "characterId" })
-  character: Character;
+  @Column({ type: 'uuid' })
+  characterId: string;
 }

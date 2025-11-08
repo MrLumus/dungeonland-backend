@@ -1,9 +1,6 @@
-import { Character } from "@modules/character/entities";
 import {
   Column,
   Entity,
-  JoinColumn,
-  ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
 
@@ -18,9 +15,6 @@ export class Note {
   @Column("text", { default: "" })
   content: string;
 
-  @ManyToOne(() => Character, (c) => c.notes, {
-    onDelete: "CASCADE",
-  })
-  @JoinColumn({ name: "characterId" })
-  character: Character;
+  @Column({ type: 'uuid' })
+  characterId: string;
 }

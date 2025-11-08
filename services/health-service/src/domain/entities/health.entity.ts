@@ -1,11 +1,8 @@
 import {
   Column,
   Entity,
-  JoinColumn,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Character } from "@character/entities";
 
 @Entity({ name: "health" })
 export class Health {
@@ -30,9 +27,6 @@ export class Health {
   @Column({ default: 0 })
   deathFailSaveThrows: number;
 
-  @OneToOne(() => Character, (c) => c.health, {
-    onDelete: "CASCADE",
-  })
-  @JoinColumn({ name: "characterId" })
-  character: Character;
+  @Column({ type: 'uuid' })
+  characterId: string;
 }

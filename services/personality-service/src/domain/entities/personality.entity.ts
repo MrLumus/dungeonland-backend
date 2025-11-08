@@ -1,9 +1,6 @@
-import { Character } from "@character/entities";
 import {
   Column,
   Entity,
-  JoinColumn,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
 
@@ -60,7 +57,6 @@ export class Personality {
   @Column({ default: null, nullable: true })
   age: number;
 
-  @OneToOne(() => Character, (c) => c.personality, { onDelete: "CASCADE" })
-  @JoinColumn({ name: "characterId" })
-  character: Character;
+  @Column({ type: 'uuid' })
+  characterId: string;
 }

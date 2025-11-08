@@ -2,50 +2,42 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  ManyToOne,
-  JoinColumn,
   OneToMany,
 } from "typeorm";
-import { Character } from "@character/entities";
-import { CharacterSkill } from "../entities";
-import { StatReference } from "@reference/entities";
+import { CharacterSkill } from "./character-skill.entity";
 
 @Entity("character_stat")
 export class CharacterStat {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Character, (character) => character.stats, {
-    onDelete: "CASCADE",
-  })
-  @JoinColumn({ name: "character_id" })
-  character: Character; // Ссылка на персонажа
+  @Column({ type: 'uuid' })
+  characterId: string; // Reference to Character
 
-  @ManyToOne(() => StatReference, { eager: true })
-  @JoinColumn({ name: "stat_id" })
-  stat: StatReference; // Ссылка на референс характеристики
+  @Column({ type: 'integer' })
+  statId: number; // Reference to StatReference (in reference-service)
 
   @Column({ default: 10 })
-  stat_value: number; // Значение характеристики
+  stat_value: number;
 
   @Column({ default: 0 })
-  check_value: number; // Проверка характеристики
+  check_value: number;
 
   @Column({ default: 0 })
-  check_bonus: number; // Бонус к проверке характеристики
+  check_bonus: number;
 
   @Column({ default: 0 })
-  save_throw__value: number; // Значение спасброска
+  save_throw__value: number;
 
   @Column({ default: 0 })
-  save_throw__bonus: number; // Бонус к спасброску
+  save_throw__bonus: number;
 
   @Column({ default: false })
-  save_throw_proficient: boolean; // Есть ли владение спасброском
+  save_throw_proficient: boolean;
 
   @OneToMany(() => CharacterSkill, (skill) => skill.characterStat, {
     cascade: true,
     eager: true,
   })
-  skills: CharacterSkill[]; // Список умений характеристики
+  skills: CharacterSkill[];
 }

@@ -5,8 +5,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from "typeorm";
-import { CharacterStat } from "../entities";
-import { SkillReference } from "@reference/entities";
+import { CharacterStat } from "./character-stat.entity";
 
 @Entity("character_skill")
 export class CharacterSkill {
@@ -17,18 +16,17 @@ export class CharacterSkill {
     onDelete: "CASCADE",
   })
   @JoinColumn({ name: "character_stat_id" })
-  characterStat: CharacterStat; // Ссылка на стат перонажа
+  characterStat: CharacterStat;
 
-  @ManyToOne(() => SkillReference, { eager: true })
-  @JoinColumn({ name: "skill_id" })
-  skill: SkillReference; // Ссылка на референс умения
-
-  @Column({ default: 0 })
-  value: number; // Проверка умения
+  @Column({ type: 'integer' })
+  skillId: number; // Reference to SkillReference (in reference-service)
 
   @Column({ default: 0 })
-  bonus: number; // Бонус к првоерке умения
+  value: number;
 
   @Column({ default: 0 })
-  proficient: number; // Уровень владения: 0 - нет владения, 1 - полувладение, 2 - владение, 3 - компетенция
+  bonus: number;
+
+  @Column({ default: 0 })
+  proficient: number; // 0-нет, 1-полу, 2-владение, 3-компетенция
 }

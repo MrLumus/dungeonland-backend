@@ -1,9 +1,6 @@
-import { Character } from "@character/entities";
 import {
   Column,
   Entity,
-  JoinColumn,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
 
@@ -18,9 +15,6 @@ export class Armour {
   @Column({ default: 10 })
   totalArmour: number;
 
-  @OneToOne(() => Character, (c) => c.armour, {
-    onDelete: "CASCADE",
-  })
-  @JoinColumn({ name: "characterId" })
-  character: Character;
+  @Column({ type: 'uuid' })
+  characterId: string;
 }
