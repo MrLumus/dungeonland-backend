@@ -3,21 +3,13 @@ import {
   IsString,
   IsNumber,
   IsBoolean,
-  IsEnum,
   IsOptional,
   IsArray,
-  IsObject,
   ValidateNested,
   Min,
+  IsInt,
 } from "class-validator";
 import { Type } from "class-transformer";
-import {
-  EEquipmentTypes,
-  EArmourTypes,
-  EDamageTypes,
-  ECharacteristics,
-  EDiceTypes,
-} from "../../domain/constants";
 
 // Nested DTOs for weapon properties
 export class WeaponDamageHandDto {
@@ -25,9 +17,9 @@ export class WeaponDamageHandDto {
   @IsNumber()
   diceCount: number;
 
-  @ApiProperty({ enum: EDiceTypes, example: EDiceTypes.D6 })
-  @IsEnum(EDiceTypes)
-  diceType: EDiceTypes;
+  @ApiProperty({ example: 3, description: "ID типа кубика (reference to DiceTypeReference)" })
+  @IsInt()
+  diceTypeId: number;
 
   @ApiPropertyOptional({ example: 2, description: "Бонус к урону" })
   @IsOptional()
@@ -72,10 +64,10 @@ export class WeaponPropertiesDto {
   @Type(() => WeaponDamageDto)
   damage: WeaponDamageDto;
 
-  @ApiPropertyOptional({ enum: EDamageTypes, example: EDamageTypes.Slashing })
+  @ApiPropertyOptional({ example: 2, description: "ID типа урона (reference to DamageTypeReference)" })
   @IsOptional()
-  @IsEnum(EDamageTypes)
-  damageType?: EDamageTypes;
+  @IsInt()
+  damageTypeId?: number;
 
   @ApiPropertyOptional({ example: true })
   @IsOptional()
@@ -93,10 +85,10 @@ export class WeaponPropertiesDto {
   @Type(() => WeaponRangeDto)
   range?: WeaponRangeDto;
 
-  @ApiPropertyOptional({ enum: ECharacteristics, example: ECharacteristics.STR })
+  @ApiPropertyOptional({ example: 1, description: "ID характеристики для атаки (reference to StatReference)" })
   @IsOptional()
-  @IsEnum(ECharacteristics)
-  statRoll?: ECharacteristics;
+  @IsInt()
+  statRollId?: number;
 
   @ApiPropertyOptional({ example: 2 })
   @IsOptional()
@@ -131,54 +123,54 @@ export class CreateEquipmentDto {
 
   @ApiPropertyOptional({ example: 2, description: "Inventory cells" })
   @IsOptional()
-  @IsNumber()
+  @IsInt()
   @Min(1)
   cells?: number;
 
   @ApiPropertyOptional({ example: 150, description: "Price in gold" })
   @IsOptional()
-  @IsNumber()
+  @IsInt()
   @Min(0)
   price?: number;
 
-  @ApiProperty({ enum: EEquipmentTypes, example: EEquipmentTypes.Sword })
-  @IsEnum(EEquipmentTypes)
-  type: EEquipmentTypes;
+  @ApiProperty({ example: 11, description: "ID типа снаряжения (reference to EquipmentTypeReference)" })
+  @IsInt()
+  equipmentTypeId: number;
 
   // Armor properties
   @ApiPropertyOptional({ example: 14, description: "Base armor class" })
   @IsOptional()
-  @IsNumber()
+  @IsInt()
   baseArmour?: number;
 
   @ApiPropertyOptional({ example: 2, description: "Armor bonus" })
   @IsOptional()
-  @IsNumber()
+  @IsInt()
   bonusArmour?: number;
 
-  @ApiPropertyOptional({ enum: EArmourTypes, example: EArmourTypes.Medium })
+  @ApiPropertyOptional({ example: 3, description: "ID типа брони (reference to ArmourTypeReference)" })
   @IsOptional()
-  @IsEnum(EArmourTypes)
-  armourType?: EArmourTypes;
+  @IsInt()
+  armourTypeId?: number;
 
   @ApiPropertyOptional({
-    enum: ECharacteristics,
-    isArray: true,
-    example: [ECharacteristics.DEX],
+    type: [Number],
+    example: [2],
+    description: "Array of StatReference IDs for AC calculation"
   })
   @IsOptional()
   @IsArray()
-  @IsEnum(ECharacteristics, { each: true })
-  armourStatRoll?: ECharacteristics[];
+  @IsInt({ each: true })
+  armourStatRoll?: number[];
 
   @ApiPropertyOptional({ example: 2, description: "Max stat bonus for armor" })
   @IsOptional()
-  @IsNumber()
+  @IsInt()
   armourStatRollMaxBonus?: number;
 
   @ApiPropertyOptional({ example: 16, description: "Total armor class" })
   @IsOptional()
-  @IsNumber()
+  @IsInt()
   totalArmour?: number;
 
   // Flags
@@ -224,55 +216,55 @@ export class UpdateEquipmentDto {
 
   @ApiPropertyOptional({ example: 2, description: "Inventory cells" })
   @IsOptional()
-  @IsNumber()
+  @IsInt()
   @Min(1)
   cells?: number;
 
   @ApiPropertyOptional({ example: 200, description: "Price in gold" })
   @IsOptional()
-  @IsNumber()
+  @IsInt()
   @Min(0)
   price?: number;
 
-  @ApiPropertyOptional({ enum: EEquipmentTypes, example: EEquipmentTypes.Sword })
+  @ApiPropertyOptional({ example: 11, description: "ID типа снаряжения (reference to EquipmentTypeReference)" })
   @IsOptional()
-  @IsEnum(EEquipmentTypes)
-  type?: EEquipmentTypes;
+  @IsInt()
+  equipmentTypeId?: number;
 
   // Armor properties
   @ApiPropertyOptional({ example: 14, description: "Base armor class" })
   @IsOptional()
-  @IsNumber()
+  @IsInt()
   baseArmour?: number;
 
   @ApiPropertyOptional({ example: 3, description: "Armor bonus" })
   @IsOptional()
-  @IsNumber()
+  @IsInt()
   bonusArmour?: number;
 
-  @ApiPropertyOptional({ enum: EArmourTypes, example: EArmourTypes.Medium })
+  @ApiPropertyOptional({ example: 3, description: "ID типа брони (reference to ArmourTypeReference)" })
   @IsOptional()
-  @IsEnum(EArmourTypes)
-  armourType?: EArmourTypes;
+  @IsInt()
+  armourTypeId?: number;
 
   @ApiPropertyOptional({
-    enum: ECharacteristics,
-    isArray: true,
-    example: [ECharacteristics.DEX],
+    type: [Number],
+    example: [2],
+    description: "Array of StatReference IDs for AC calculation"
   })
   @IsOptional()
   @IsArray()
-  @IsEnum(ECharacteristics, { each: true })
-  armourStatRoll?: ECharacteristics[];
+  @IsInt({ each: true })
+  armourStatRoll?: number[];
 
   @ApiPropertyOptional({ example: 2, description: "Max stat bonus for armor" })
   @IsOptional()
-  @IsNumber()
+  @IsInt()
   armourStatRollMaxBonus?: number;
 
   @ApiPropertyOptional({ example: 17, description: "Total armor class" })
   @IsOptional()
-  @IsNumber()
+  @IsInt()
   totalArmour?: number;
 
   // Flags

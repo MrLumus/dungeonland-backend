@@ -3,24 +3,17 @@ import {
   PrimaryGeneratedColumn,
   Column,
 } from "typeorm";
-import {
-  EEquipmentTypes,
-  EArmourTypes,
-  EDamageTypes,
-  ECharacteristics,
-  EDiceTypes,
-} from "../constants";
 
 export interface IWeaponDamage {
   oneHanded?: {
     diceCount: number;
-    diceType: EDiceTypes;
+    diceTypeId: number; // Reference to DiceTypeReference
     bonus?: number;
     totalAttackBonus?: number;
   };
   twoHanded?: {
     diceCount: number;
-    diceType: EDiceTypes;
+    diceTypeId: number; // Reference to DiceTypeReference
     bonus?: number;
     totalAttackBonus?: number;
   };
@@ -28,14 +21,14 @@ export interface IWeaponDamage {
 
 export interface IWeaponProperties {
   damage: IWeaponDamage;
-  damageType?: EDamageTypes;
+  damageTypeId?: number; // Reference to DamageTypeReference
   isVersatile?: boolean;
   hasMastery?: boolean;
   range?: {
     normal?: number;
     max?: number;
   };
-  statRoll?: ECharacteristics;
+  statRollId?: number; // Reference to StatReference (which stat to use for attack rolls)
   attackRollBonus?: number;
   totalRollBonus?: number;
 }
@@ -66,11 +59,8 @@ export class Equipment {
   @Column({ type: "int", default: 0 })
   price: number;
 
-  @Column({
-    type: "enum",
-    enum: EEquipmentTypes,
-  })
-  type: EEquipmentTypes;
+  @Column({ type: "int" })
+  equipmentTypeId: number; // Reference to EquipmentTypeReference
 
   // Armor properties
   @Column({ type: "int", nullable: true })
@@ -79,15 +69,11 @@ export class Equipment {
   @Column({ type: "int", nullable: true })
   bonusArmour?: number;
 
-  @Column({
-    type: "enum",
-    enum: EArmourTypes,
-    nullable: true,
-  })
-  armourType?: EArmourTypes;
+  @Column({ type: "int", nullable: true })
+  armourTypeId?: number; // Reference to ArmourTypeReference
 
   @Column({ type: "simple-array", nullable: true })
-  armourStatRoll?: ECharacteristics[];
+  armourStatRoll?: number[]; // Array of StatReference IDs (which stats contribute to AC)
 
   @Column({ type: "int", nullable: true })
   armourStatRollMaxBonus?: number;

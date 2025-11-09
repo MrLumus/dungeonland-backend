@@ -5,7 +5,6 @@ import { JwtModule } from "@nestjs/jwt";
 import { StatReference } from "../../domain/entities";
 import { StatReferenceService } from "../../application/services";
 import { StatReferenceController } from "../controllers";
-import { EnumsController } from "../controllers/enums.controller";
 import { JwtStrategy } from "../../infrastructure/auth";
 
 @Module({
@@ -17,7 +16,7 @@ import { JwtStrategy } from "../../infrastructure/auth";
     }),
   ],
   providers: [StatReferenceService, JwtStrategy],
-  controllers: [StatReferenceController, EnumsController],
+  controllers: [StatReferenceController],
   exports: [StatReferenceService],
 })
 export class StatReferenceModule {}

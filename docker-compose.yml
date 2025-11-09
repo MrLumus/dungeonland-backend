@@ -41,6 +41,26 @@ services:
       timeout: 5s
       retries: 5
 
+  # Reference Database (shared by all Reference domain services)
+  reference-db:
+    image: postgres:15-alpine
+    container_name: dungeonland-reference-db
+    environment:
+      POSTGRES_DB: dungeonland_reference
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5435:5432"
+    volumes:
+      - reference-db-data:/var/lib/postgresql/data
+    networks:
+      - dungeonland-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   # ==================== AUTH DOMAIN ====================
 
   # Auth Service
@@ -314,6 +334,8 @@ services:
       - dungeonland-network
     restart: unless-stopped
 
+  # ==================== REFERENCE DOMAIN ====================
+
   # Reference Service
   reference-service:
     build:
@@ -322,18 +344,18 @@ services:
     container_name: dungeonland-reference-service
     environment:
       PORT: 3010
-      CHARACTERS_DB_HOST: characters-db
-      CHARACTERS_DB_PORT: 5432
-      CHARACTERS_DB_USER: postgres
-      CHARACTERS_DB_PASSWORD: postgres
-      CHARACTERS_DB_NAME: dungeonland_characters
+      REFERENCE_DB_HOST: reference-db
+      REFERENCE_DB_PORT: 5432
+      REFERENCE_DB_USER: postgres
+      REFERENCE_DB_PASSWORD: postgres
+      REFERENCE_DB_NAME: dungeonland_reference
       DATABASE_SSL: "false"
       JWT_SECRET: your-super-secret-jwt-key-change-in-production
       CORS_ORIGIN: "*"
     ports:
       - "3010:3010"
     depends_on:
-      characters-db:
+      reference-db:
         condition: service_healthy
       auth-service:
         condition: service_started
@@ -348,3 +370,4 @@ networks:
 volumes:
   auth-db-data:
   characters-db-data:
+  reference-db-data:
