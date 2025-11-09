@@ -22,8 +22,8 @@ export class EquipmentService {
       ...dto,
       characterId,
     });
-    const saved = await this.repository.save(item);
-    
+    const saved: Equipment = await this.repository.save(item);
+
     // Return enriched data
     return this.enrichSingleEquipment(saved);
   }
@@ -56,8 +56,8 @@ export class EquipmentService {
       throw new NotFoundException('Equipment not found');
     }
     Object.assign(item, dto);
-    const saved = await this.repository.save(item);
-    
+    const saved: Equipment = await this.repository.save(item);
+
     // Return enriched data
     return this.enrichSingleEquipment(saved);
   }
