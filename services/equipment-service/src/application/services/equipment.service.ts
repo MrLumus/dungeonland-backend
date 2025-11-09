@@ -17,12 +17,12 @@ export class EquipmentService {
     private readonly httpService: HttpService
   ) {}
 
-  async create(userId: string, characterId: string, dto: any) {
+  async create(userId: string, characterId: string, dto: any): Promise<any> {
     const item = this.repository.create({
       ...dto,
       characterId,
-    });
-    const saved: Equipment = await this.repository.save(item);
+    } as any) as unknown as Equipment;
+    const saved = await this.repository.save(item as any) as unknown as Equipment;
 
     // Return enriched data
     return this.enrichSingleEquipment(saved);
@@ -50,13 +50,13 @@ export class EquipmentService {
     return this.enrichSingleEquipment(item);
   }
 
-  async update(userId: string, id: string, dto: any) {
+  async update(userId: string, id: string, dto: any): Promise<any> {
     const item = await this.repository.findOne({ where: { id } });
     if (!item) {
       throw new NotFoundException('Equipment not found');
     }
     Object.assign(item, dto);
-    const saved: Equipment = await this.repository.save(item);
+    const saved = await this.repository.save(item as any) as unknown as Equipment;
 
     // Return enriched data
     return this.enrichSingleEquipment(saved);
