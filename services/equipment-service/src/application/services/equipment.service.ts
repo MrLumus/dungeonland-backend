@@ -4,6 +4,7 @@ import { Repository } from "typeorm";
 import { Equipment } from "../../domain/entities";
 import { HttpService } from "@nestjs/axios";
 import { firstValueFrom } from "rxjs";
+import { AxiosResponse } from "axios";
 
 @Injectable()
 export class EquipmentService {
@@ -231,7 +232,7 @@ export class EquipmentService {
    */
   private async fetchEquipmentTypes(): Promise<any[]> {
     const url = `${this.REFERENCE_SERVICE}/equipment-types`;
-    const response = await firstValueFrom(this.httpService.get(url));
+    const response: AxiosResponse<any[]> = await firstValueFrom(this.httpService.get(url));
     return response.data || [];
   }
 
@@ -240,7 +241,7 @@ export class EquipmentService {
    */
   private async fetchArmourTypes(): Promise<any[]> {
     const url = `${this.REFERENCE_SERVICE}/armour-types`;
-    const response = await firstValueFrom(this.httpService.get(url));
+    const response: AxiosResponse<any[]> = await firstValueFrom(this.httpService.get(url));
     return response.data || [];
   }
 
@@ -249,7 +250,7 @@ export class EquipmentService {
    */
   private async fetchDamageTypes(): Promise<any[]> {
     const url = `${this.REFERENCE_SERVICE}/damage-types`;
-    const response = await firstValueFrom(this.httpService.get(url));
+    const response: AxiosResponse<any[]> = await firstValueFrom(this.httpService.get(url));
     return response.data || [];
   }
 
@@ -258,7 +259,7 @@ export class EquipmentService {
    */
   private async fetchDiceTypes(): Promise<any[]> {
     const url = `${this.REFERENCE_SERVICE}/dice-types`;
-    const response = await firstValueFrom(this.httpService.get(url));
+    const response: AxiosResponse<any[]> = await firstValueFrom(this.httpService.get(url));
     return response.data || [];
   }
 
@@ -267,7 +268,7 @@ export class EquipmentService {
    */
   private async fetchStats(): Promise<any[]> {
     const url = `${this.REFERENCE_SERVICE}/stats`;
-    const response = await firstValueFrom(this.httpService.get(url));
+    const response: AxiosResponse<any[]> = await firstValueFrom(this.httpService.get(url));
     return response.data || [];
   }
 }
