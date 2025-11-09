@@ -18,6 +18,7 @@ export class MicroservicesClientService {
   private readonly STATS_SERVICE = process.env.STATS_SERVICE_URL || "http://stats-service:3007";
   private readonly PERSONALITY_SERVICE = process.env.PERSONALITY_SERVICE_URL || "http://personality-service:3008";
   private readonly NOTE_SERVICE = process.env.NOTE_SERVICE_URL || "http://note-service:3009";
+  private readonly EQUIPMENT_SERVICE = process.env.EQUIPMENT_SERVICE_URL || "http://equipment-service:3011";
 
   constructor(private readonly httpService: HttpService) {}
 
@@ -52,7 +53,7 @@ export class MicroservicesClientService {
     const headers = { Authorization: `Bearer ${token}` };
 
     try {
-      const [health, level, speed, armour, stats, personality, notes] = await Promise.allSettled([
+      const [health, level, speed, armour, stats, personality, notes, equipment] = await Promise.allSettled([
         this.getHealth(characterId, userId, headers),
         this.getLevel(characterId, userId, headers),
         this.getSpeed(characterId, userId, headers),
@@ -60,6 +61,7 @@ export class MicroservicesClientService {
         this.getStats(characterId, userId, headers),
         this.getPersonality(characterId, userId, headers),
         this.getNotes(characterId, userId, headers),
+        this.getEquipment(characterId, userId, headers),
       ]);
 
       return {
@@ -70,6 +72,7 @@ export class MicroservicesClientService {
         stats: stats.status === 'fulfilled' ? stats.value : [],
         personality: personality.status === 'fulfilled' ? personality.value : null,
         notes: notes.status === 'fulfilled' ? notes.value : [],
+        equipment: equipment.status === 'fulfilled' ? equipment.value : [],
       };
     } catch (error) {
       this.logger.error(`Error fetching complete data for character ${characterId}:`, error.message);
@@ -159,6 +162,12 @@ export class MicroservicesClientService {
 
   private async getNotes(characterId: string, userId: string, headers: any): Promise<any> {
     const url = `${this.NOTE_SERVICE}/characters/${characterId}/notes`;
+    const response = await firstValueFrom(this.httpService.get(url, { headers }));
+    return response.data;
+  }
+
+  private async getEquipment(characterId: string, userId: string, headers: any): Promise<any> {
+    const url = `${this.EQUIPMENT_SERVICE}/characters/${characterId}/equipment`;
     const response = await firstValueFrom(this.httpService.get(url, { headers }));
     return response.data;
   }

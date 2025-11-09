@@ -287,6 +287,33 @@ services:
       - dungeonland-network
     restart: unless-stopped
 
+  # Equipment Service
+  equipment-service:
+    build:
+      context: ./services/equipment-service
+      dockerfile: Dockerfile
+    container_name: dungeonland-equipment-service
+    environment:
+      PORT: 3011
+      CHARACTERS_DB_HOST: characters-db
+      CHARACTERS_DB_PORT: 5432
+      CHARACTERS_DB_USER: postgres
+      CHARACTERS_DB_PASSWORD: postgres
+      CHARACTERS_DB_NAME: dungeonland_characters
+      DATABASE_SSL: "false"
+      JWT_SECRET: your-super-secret-jwt-key-change-in-production
+      CORS_ORIGIN: "*"
+    ports:
+      - "3011:3011"
+    depends_on:
+      characters-db:
+        condition: service_healthy
+      auth-service:
+        condition: service_started
+    networks:
+      - dungeonland-network
+    restart: unless-stopped
+
   # Reference Service
   reference-service:
     build:
