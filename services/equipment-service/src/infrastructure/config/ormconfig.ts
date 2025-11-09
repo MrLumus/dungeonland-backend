@@ -12,7 +12,7 @@ const ormconfig: DataSourceOptions = {
   database: process.env.CHARACTERS_DB_NAME || "dungeonland_characters",
   ssl: process.env.DATABASE_SSL === "true",
   synchronize: true, // Set to false in production
-  entities: [__dirname + "/../**/*.entity{.ts,.js}"],
+  entities: [__dirname + "/../../**/*.entity{.ts,.js}"],
 };
 
 export default ormconfig;
