@@ -1,0 +1,20 @@
+# WSL2 Configuration
+# Скопируйте этот файл в C:\Users\<ваш_юзер>\.wslconfig
+# После копирования выполните: wsl --shutdown
+
+[wsl2]
+# Ограничение памяти (по умолчанию WSL берёт 50% RAM)
+memory=8GB
+
+# Количество процессоров
+processors=4
+
+# Swap файл
+swap=2GB
+
+# Сетевые настройки
+localhostForwarding=true
+
+# ВАЖНО: Включает sparse VHD - диск не будет расти бесконечно
+[experimental]
+sparseVhd=true

@@ -1,0 +1,376 @@
+services:
+  # ==================== DATABASES ====================
+
+  # Auth Database
+  auth-db:
+    image: postgres:15-alpine
+    container_name: dungeonland-auth-db
+    environment:
+      POSTGRES_DB: dungeonland_auth
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - auth-db-data:/var/lib/postgresql/data
+    networks:
+      - dungeonland-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Characters Database (shared by all Characters domain services)
+  characters-db:
+    image: postgres:15-alpine
+    container_name: dungeonland-characters-db
+    environment:
+      POSTGRES_DB: dungeonland_characters
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5434:5432"
+    volumes:
+      - characters-db-data:/var/lib/postgresql/data
+    networks:
+      - dungeonland-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Reference Database (shared by all Reference domain services)
+  reference-db:
+    image: postgres:15-alpine
+    container_name: dungeonland-reference-db
+    environment:
+      POSTGRES_DB: dungeonland_reference
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5435:5432"
+    volumes:
+      - reference-db-data:/var/lib/postgresql/data
+    networks:
+      - dungeonland-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ==================== AUTH DOMAIN ====================
+
+  # Auth Service
+  auth-service:
+    build:
+      context: ./services/auth-service
+      dockerfile: Dockerfile
+    container_name: dungeonland-auth-service
+    environment:
+      PORT: 3001
+      AUTH_DB_HOST: auth-db
+      AUTH_DB_PORT: 5432
+      AUTH_DB_USER: postgres
+      AUTH_DB_PASSWORD: postgres
+      AUTH_DB_NAME: dungeonland_auth
+      DATABASE_SSL: "false"
+      JWT_SECRET: your-super-secret-jwt-key-change-in-production
+      JWT_EXPIRES_IN: 24h
+      CORS_ORIGIN: "*"
+    ports:
+      - "3001:3001"
+    depends_on:
+      auth-db:
+        condition: service_healthy
+    networks:
+      - dungeonland-network
+    restart: unless-stopped
+
+  # ==================== CHARACTERS DOMAIN ====================
+
+  # Characters Service (Main)
+  characters-service:
+    build:
+      context: ./services/characters-service
+      dockerfile: Dockerfile
+    container_name: dungeonland-characters-service
+    environment:
+      PORT: 3002
+      CHARACTERS_DB_HOST: characters-db
+      CHARACTERS_DB_PORT: 5432
+      CHARACTERS_DB_USER: postgres
+      CHARACTERS_DB_PASSWORD: postgres
+      CHARACTERS_DB_NAME: dungeonland_characters
+      DATABASE_SSL: "false"
+      JWT_SECRET: your-super-secret-jwt-key-change-in-production
+      CORS_ORIGIN: "*"
+    ports:
+      - "3002:3002"
+    depends_on:
+      characters-db:
+        condition: service_healthy
+      auth-service:
+        condition: service_started
+    networks:
+      - dungeonland-network
+    restart: unless-stopped
+
+  # Health Service
+  health-service:
+    build:
+      context: ./services/health-service
+      dockerfile: Dockerfile
+    container_name: dungeonland-health-service
+    environment:
+      PORT: 3003
+      CHARACTERS_DB_HOST: characters-db
+      CHARACTERS_DB_PORT: 5432
+      CHARACTERS_DB_USER: postgres
+      CHARACTERS_DB_PASSWORD: postgres
+      CHARACTERS_DB_NAME: dungeonland_characters
+      DATABASE_SSL: "false"
+      JWT_SECRET: your-super-secret-jwt-key-change-in-production
+      CORS_ORIGIN: "*"
+    ports:
+      - "3003:3003"
+    depends_on:
+      characters-db:
+        condition: service_healthy
+      auth-service:
+        condition: service_started
+    networks:
+      - dungeonland-network
+    restart: unless-stopped
+
+  # Level Service
+  level-service:
+    build:
+      context: ./services/level-service
+      dockerfile: Dockerfile
+    container_name: dungeonland-level-service
+    environment:
+      PORT: 3004
+      CHARACTERS_DB_HOST: characters-db
+      CHARACTERS_DB_PORT: 5432
+      CHARACTERS_DB_USER: postgres
+      CHARACTERS_DB_PASSWORD: postgres
+      CHARACTERS_DB_NAME: dungeonland_characters
+      DATABASE_SSL: "false"
+      JWT_SECRET: your-super-secret-jwt-key-change-in-production
+      CORS_ORIGIN: "*"
+    ports:
+      - "3004:3004"
+    depends_on:
+      characters-db:
+        condition: service_healthy
+      auth-service:
+        condition: service_started
+    networks:
+      - dungeonland-network
+    restart: unless-stopped
+
+  # Speed Service
+  speed-service:
+    build:
+      context: ./services/speed-service
+      dockerfile: Dockerfile
+    container_name: dungeonland-speed-service
+    environment:
+      PORT: 3005
+      CHARACTERS_DB_HOST: characters-db
+      CHARACTERS_DB_PORT: 5432
+      CHARACTERS_DB_USER: postgres
+      CHARACTERS_DB_PASSWORD: postgres
+      CHARACTERS_DB_NAME: dungeonland_characters
+      DATABASE_SSL: "false"
+      JWT_SECRET: your-super-secret-jwt-key-change-in-production
+      CORS_ORIGIN: "*"
+    ports:
+      - "3005:3005"
+    depends_on:
+      characters-db:
+        condition: service_healthy
+      auth-service:
+        condition: service_started
+    networks:
+      - dungeonland-network
+    restart: unless-stopped
+
+  # Armour Service
+  armour-service:
+    build:
+      context: ./services/armour-service
+      dockerfile: Dockerfile
+    container_name: dungeonland-armour-service
+    environment:
+      PORT: 3006
+      CHARACTERS_DB_HOST: characters-db
+      CHARACTERS_DB_PORT: 5432
+      CHARACTERS_DB_USER: postgres
+      CHARACTERS_DB_PASSWORD: postgres
+      CHARACTERS_DB_NAME: dungeonland_characters
+      DATABASE_SSL: "false"
+      JWT_SECRET: your-super-secret-jwt-key-change-in-production
+      CORS_ORIGIN: "*"
+    ports:
+      - "3006:3006"
+    depends_on:
+      characters-db:
+        condition: service_healthy
+      auth-service:
+        condition: service_started
+    networks:
+      - dungeonland-network
+    restart: unless-stopped
+
+  # Stats Service
+  stats-service:
+    build:
+      context: ./services/stats-service
+      dockerfile: Dockerfile
+    container_name: dungeonland-stats-service
+    environment:
+      PORT: 3007
+      CHARACTERS_DB_HOST: characters-db
+      CHARACTERS_DB_PORT: 5432
+      CHARACTERS_DB_USER: postgres
+      CHARACTERS_DB_PASSWORD: postgres
+      CHARACTERS_DB_NAME: dungeonland_characters
+      DATABASE_SSL: "false"
+      JWT_SECRET: your-super-secret-jwt-key-change-in-production
+      CORS_ORIGIN: "*"
+    ports:
+      - "3007:3007"
+    depends_on:
+      characters-db:
+        condition: service_healthy
+      auth-service:
+        condition: service_started
+    networks:
+      - dungeonland-network
+    restart: unless-stopped
+
+  # Personality Service
+  personality-service:
+    build:
+      context: ./services/personality-service
+      dockerfile: Dockerfile
+    container_name: dungeonland-personality-service
+    environment:
+      PORT: 3008
+      CHARACTERS_DB_HOST: characters-db
+      CHARACTERS_DB_PORT: 5432
+      CHARACTERS_DB_USER: postgres
+      CHARACTERS_DB_PASSWORD: postgres
+      CHARACTERS_DB_NAME: dungeonland_characters
+      DATABASE_SSL: "false"
+      JWT_SECRET: your-super-secret-jwt-key-change-in-production
+      CORS_ORIGIN: "*"
+    ports:
+      - "3008:3008"
+    depends_on:
+      characters-db:
+        condition: service_healthy
+      auth-service:
+        condition: service_started
+    networks:
+      - dungeonland-network
+    restart: unless-stopped
+
+  # Note Service
+  note-service:
+    build:
+      context: ./services/note-service
+      dockerfile: Dockerfile
+    container_name: dungeonland-note-service
+    environment:
+      PORT: 3009
+      CHARACTERS_DB_HOST: characters-db
+      CHARACTERS_DB_PORT: 5432
+      CHARACTERS_DB_USER: postgres
+      CHARACTERS_DB_PASSWORD: postgres
+      CHARACTERS_DB_NAME: dungeonland_characters
+      DATABASE_SSL: "false"
+      JWT_SECRET: your-super-secret-jwt-key-change-in-production
+      CORS_ORIGIN: "*"
+    ports:
+      - "3009:3009"
+    depends_on:
+      characters-db:
+        condition: service_healthy
+      auth-service:
+        condition: service_started
+    networks:
+      - dungeonland-network
+    restart: unless-stopped
+
+  # Equipment Service
+  equipment-service:
+    build:
+      context: ./services/equipment-service
+      dockerfile: Dockerfile
+    container_name: dungeonland-equipment-service
+    environment:
+      PORT: 3011
+      CHARACTERS_DB_HOST: characters-db
+      CHARACTERS_DB_PORT: 5432
+      CHARACTERS_DB_USER: postgres
+      CHARACTERS_DB_PASSWORD: postgres
+      CHARACTERS_DB_NAME: dungeonland_characters
+      DATABASE_SSL: "false"
+      REFERENCE_SERVICE_URL: http://reference-service:3010
+      JWT_SECRET: your-super-secret-jwt-key-change-in-production
+      CORS_ORIGIN: "*"
+    ports:
+      - "3011:3011"
+    depends_on:
+      characters-db:
+        condition: service_healthy
+      reference-service:
+        condition: service_started
+      auth-service:
+        condition: service_started
+    networks:
+      - dungeonland-network
+    restart: unless-stopped
+
+  # ==================== REFERENCE DOMAIN ====================
+
+  # Reference Service
+  reference-service:
+    build:
+      context: ./services/reference-service
+      dockerfile: Dockerfile
+    container_name: dungeonland-reference-service
+    environment:
+      PORT: 3010
+      REFERENCE_DB_HOST: reference-db
+      REFERENCE_DB_PORT: 5432
+      REFERENCE_DB_USER: postgres
+      REFERENCE_DB_PASSWORD: postgres
+      REFERENCE_DB_NAME: dungeonland_reference
+      DATABASE_SSL: "false"
+      JWT_SECRET: your-super-secret-jwt-key-change-in-production
+      CORS_ORIGIN: "*"
+    ports:
+      - "3010:3010"
+    depends_on:
+      reference-db:
+        condition: service_healthy
+      auth-service:
+        condition: service_started
+    networks:
+      - dungeonland-network
+    restart: unless-stopped
+
+networks:
+  dungeonland-network:
+    driver: bridge
+
+volumes:
+  auth-db-data:
+  characters-db-data:
+  reference-db-data:
